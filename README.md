@@ -100,6 +100,8 @@ uv run main.py
 
 </details>
 
+</details>
+
 ### Prerequisites
 
 * Python 3.11+
