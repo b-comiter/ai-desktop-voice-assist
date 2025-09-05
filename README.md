@@ -1,4 +1,4 @@
-# Voice Assistant
+# Desktop Voice Assistant
 
 A local AI-powered voice assistant that lets you interact naturally with your computer. Speak to it, and it listens, thinks, and responds — just like a personal AI agent running on your machine.
 
@@ -22,7 +22,7 @@ This flow makes the assistant function like OpenAI’s voice assistant, but full
 ## 📂 Project Structure
 
 ```
-├── voice-assist/
+├── desktop-voice-assist/
 │   ├── uv.lock
 │   ├── pyproject.toml
 │   ├── print_structure.py
