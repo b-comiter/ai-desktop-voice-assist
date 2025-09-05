@@ -96,6 +96,9 @@ pip install uv
 
 ```console
 uv run main.py
+```
+
+</details>
 
 ### Prerequisites
 
