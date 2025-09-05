@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "voice-assist"
+version = "0.1.0"
+description = "My voice assistant project"
+readme = "README.md"
+authors = [{ name="b-comiter", email="you@example.com" }]
+requires-python = ">=3.11"
+dependencies = [
+    "colorama>=0.4.6",
+    "faster-whisper>=1.2.0",
+    "kokoro-onnx>=0.4.9",
+    "matplotlib>=3.10.6",
+    "ml-dtypes>=0.5.3",
+    "ollama>=0.5.3",
+    "psutil>=7.0.0",
+    "pyautogui>=0.9.54",
+    "pydantic>=2.11.7",
+    "pyperclip>=1.9.0",
+    "sounddevice>=0.5.2",
+    "soundfile>=0.13.1",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[dependency-groups]
+dev = []

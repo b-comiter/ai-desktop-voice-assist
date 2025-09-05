@@ -1,0 +1,23 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# File types
+*.wav
+*.txt
+.DS_Store
+
+# Folders
+data/samples/
+data/audio_input/
+benchmarks/results/
+
+# Files
+print_structure.py
