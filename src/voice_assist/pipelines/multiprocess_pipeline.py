@@ -71,3 +71,6 @@ def run():
     p1.join()
     p2.join()
     p3.join()
+
+if __name__ == "__main__":
+    run()
