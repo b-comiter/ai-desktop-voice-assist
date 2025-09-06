@@ -21,3 +21,6 @@ benchmarks/results/
 
 # Files
 print_structure.py
+kokoro-v1.0.onnx
+voices-v1.0.bin
+context.json
