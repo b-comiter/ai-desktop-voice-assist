@@ -1,11 +1,12 @@
 # Desktop Voice Assistant
 
-A local AI-powered voice assistant that lets you interact naturally with your computer. Speak to it, and it listens, thinks, and responds — just like a personal AI agent running on your machine.
+A local AI-powered voice assistant that lets you interact naturally with your computer. Speak to it, and it listens, thinks, and responds like a personal AI agent running on your machine.
+
+* (The project is still in flux and may change goals or focuses overtime.)
 
 ## ✨ Features
 
 * **Voice Interaction**: Speak naturally to the assistant, and get spoken responses back.
-* **Local Processing**: Uses Ollama and other local tools — your data stays on your device.
 * **Computer Control**: The assistant can open apps, play music, and more using JSON-based commands.
 * **Benchmarking**: Built-in testing framework to compare different models and measure performance.
 
@@ -17,12 +18,10 @@ The system is composed of three main parts:
 2. **LLM Agent**: Processes text input, decides how to respond, and can issue JSON commands.
 3. **Voice Synthesizer**: Converts responses back into natural-sounding speech.
 
-This flow makes the assistant function like OpenAI’s voice assistant, but fully local.
-
 ## 📂 Project Structure
 
 ```
-├── desktop-voice-assist/
+├── ai-desktop-voice-assist/
 │   ├── uv.lock
 │   ├── pyproject.toml
 │   ├── print_structure.py
@@ -83,13 +82,13 @@ pip install uv
 ```
 
 2. Download the repo
-   
+
 3. From the repo
-   
+
     ```console
     uv sync
     ```
-   
+
 4. Download the files [`kokoro-v1.0.onnx`](https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/kokoro-v1.0.onnx), and [`voices-v1.0.bin`](https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/voices-v1.0.bin) and place them into the src/voice_assist/voice/kokoro
 
 5. Run
@@ -133,6 +132,12 @@ Contributions are welcome! Feel free to submit pull requests for:
 * Bug fixes
 * Model integrations
 * Benchmarks improvements
+
+## 🎯 Upcoming Work
+
+* Revising/Improving the multi-processing pipeline
+* Allow the agent to dictate and paste the text directly to the cursor.
+* Add the ability to interrupt the agent while its speaking.
 
 ## 📄 License
 
