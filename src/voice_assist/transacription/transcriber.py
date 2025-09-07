@@ -33,51 +33,37 @@ class Transcriber:
         print(Fore.BLUE + f"Listening... speak into the microphone.")
 
         with sd.InputStream(samplerate=self.config.sample_rate, channels=self.config.channels, dtype="float32") as stream:
+            return self._transcribe_audio_stream(block_size, silence_limit, stream)
+
+    def _transcribe_audio_stream(self, block_size, silence_limit, stream):
+        while True:
+            audio_buffer = []
+            silence_counter = 0
+            recording = False
+
+            # --- Combined loop for waiting and capturing speech ---
             while True:
-                audio_buffer = []
-                silence_counter = 0
-                recording = False
+                block, _ = stream.read(block_size)
+                block = block.flatten()  # Flatten the block to 1D array
 
-                # --- Wait for speech ---
-                while not recording:
-                    block, _ = stream.read(block_size)
-                    block = block.flatten()
+                volume = np.abs(block).mean()
 
-                    volume = np.abs(block).mean()
-                    if volume > self.config.silence_threshold:
-                        audio_buffer.append(block.copy())
-                        recording = True
-
-                # --- Capture speech until silence ---
-                while recording:
-                    block, _ = stream.read(block_size)
-                    block = block.flatten()
-
+                if volume > self.config.silence_threshold:
                     audio_buffer.append(block.copy())
+                    recording = True
+                    silence_counter = 0  # Reset silence counter when speech is detected
+                elif recording:
+                    silence_counter += 1
 
-                    volume = np.abs(block).mean()
-                    if volume <= self.config.silence_threshold:
-                        silence_counter += 1
-                    else:
-                        silence_counter = 0
+                if recording and silence_counter > silence_limit:
+                    print(Fore.CYAN + "📝 Transcribing...")
+                    audio_data = np.concatenate(audio_buffer)
+                    output_text = self.transcribe_wav_file(audio_data)
 
-                    if silence_counter > silence_limit:
-                        recording = False
-                        print(Fore.CYAN + "📝 Transcribing...")
+                    # Save processed mic input for debugging
+                    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                    wav_filename = self.config.output_dir / f"mic_clean_{timestamp}.wav"
+                    sf.write(wav_filename, audio_data, self.config.sample_rate)
+                    print(Fore.CYAN + f"💾 Saved processed mic input: {wav_filename}")
 
-                        audio_data = np.concatenate(audio_buffer)
-                        output_text = self.transcribe_wav_file(audio_data)
-
-                        # Save processed mic input for debugging
-                        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                        wav_filename = self.config.output_dir / f"mic_clean_{timestamp}.wav"
-                        sf.write(wav_filename, np.array(audio_data, dtype=np.float32), self.config.sample_rate)
-                        print(Fore.CYAN + f"💾 Saved processed mic input: {wav_filename}")
-
-                        if debug:
-                            txt_filename = self.config.output_dir / f"text_{timestamp}.txt"
-                            with open(txt_filename, "w", encoding="utf-8") as f:
-                                f.write(output_text)
-                            print(f"💾 Saved transcript to {txt_filename}")
-
-                        return output_text
+                    return output_text
