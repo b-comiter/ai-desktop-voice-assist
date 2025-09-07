@@ -12,6 +12,20 @@ from voice_assist.transacription.transcriber import Transcriber
 from voice_assist.voice.voice_synth import Vocalizer
 from voice_assist.utils.context_manager import ContextManager
 
+
+from voice_assist.transacription.transcriber import Transcriber
+from voice_assist.transacription.config import TranscriberConfig
+
+# Create a configuration object
+transcriberConfig = TranscriberConfig(
+    sample_rate=24000,
+    channels=1,
+    block_duration=0.1,
+    silence_threshold=0.02,
+    silence_duration=2.0,
+    output_dir=Path("data/audio_input")
+)
+
 context_manager = ContextManager()
 context_manager.clear_user("user")
 
@@ -27,7 +41,7 @@ init(autoreset=True)
 # -------------------------------
 
 def transcriber_process(transcribe_queue, command_queue, playback_queue):
-    transcriber = Transcriber()
+    transcriber = Transcriber(config=transcriberConfig)
     while True:
         text = transcriber.transcribe(agent_audio_buffer=playback_queue)
         transcribe_queue.put((text, time.time()))
@@ -38,7 +52,6 @@ def transcriber_process(transcribe_queue, command_queue, playback_queue):
             print(f"[Transcriber] Detected voice command: {text}")
 
         time.sleep(1)
-
 
 def llm_process(transcribe_queue, llm_queue, llm_running):
     while True:
@@ -56,7 +69,6 @@ def llm_process(transcribe_queue, llm_queue, llm_running):
         else:
             time.sleep(0.01)
             continue
-
 
 def voice_synthesizer(llm_queue, audio_queue, llm_running, engine="kokoro"):
     vocalizer = Vocalizer(engine=engine)
@@ -90,8 +102,6 @@ def voice_synthesizer(llm_queue, audio_queue, llm_running, engine="kokoro"):
         print(Fore.CYAN + f"💾 Saved processed mic input: {wav_filename}")
         i += 1
 
-
-
 def audio_playback(audio_queue, playback_queue, llm_running):
     while True:
         if not llm_running["value"]:
@@ -114,14 +124,12 @@ def audio_playback(audio_queue, playback_queue, llm_running):
         sd.wait()
         print(f"[Audio Playback] Played audio (timestamp {timestamp:.3f})")
 
-
 def flush_queue(q):
     while not q.empty():
         try:
             q.get_nowait()
         except:
             break
-
 
 # -------------------------------
 # Pipeline

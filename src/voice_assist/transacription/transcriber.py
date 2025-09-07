@@ -4,24 +4,18 @@ import sounddevice as sd
 import numpy as np
 import soundfile as sf
 from colorama import Fore, init
-from pathlib import Path
 from datetime import datetime
+from .config import TranscriberConfig
 
-SAMPLE_RATE = 24000  # Whisper-friendly rate
-CHANNELS = 1
-BLOCK_DURATION = 0.1  # seconds per block (100ms)
-SILENCE_THRESHOLD = 0.01  # adjust for your mic/background
-SILENCE_DURATION = 2  # stop if silence lasts this long
 init(autoreset=True)  # so colors reset automatically
-
-OUTPUT_DIR = Path("data/audio_input")
-OUTPUT_DIR.mkdir(exist_ok=True)
 
 class Transcriber:
     def __init__(
-        self, model_name="distil-small.en", device="cpu", compute_type="float32"
+        self, config: TranscriberConfig, model_name="distil-small.en", device="cpu", compute_type="float32"
     ):
+        self.config = config
         self.model = WhisperModel(model_name, device=device, compute_type=compute_type)
+        self.config.output_dir.mkdir(exist_ok=True)  # Ensure output directory exists
 
     def transcribe_wav_file(self, data):  # Data can be wav file path or audio buffer
         """
@@ -34,11 +28,11 @@ class Transcriber:
         return transcript.strip()
     
     def transcribe(self, debug=False, agent_audio_buffer=None):
-        block_size = int(SAMPLE_RATE * BLOCK_DURATION)
-        silence_limit = int(SILENCE_DURATION / BLOCK_DURATION)
+        block_size = int(self.config.sample_rate * self.config.block_duration)
+        silence_limit = int(self.config.silence_duration / self.config.block_duration)
         print(Fore.BLUE + f"Listening... speak into the microphone.")
 
-        with sd.InputStream(samplerate=SAMPLE_RATE, channels=CHANNELS, dtype="float32") as stream:
+        with sd.InputStream(samplerate=self.config.sample_rate, channels=self.config.channels, dtype="float32") as stream:
             while True:
                 audio_buffer = []
                 silence_counter = 0
@@ -50,7 +44,7 @@ class Transcriber:
                     block = block.flatten()
 
                     volume = np.abs(block).mean()
-                    if volume > SILENCE_THRESHOLD:
+                    if volume > self.config.silence_threshold:
                         audio_buffer.append(block.copy())
                         recording = True
 
@@ -62,7 +56,7 @@ class Transcriber:
                     audio_buffer.append(block.copy())
 
                     volume = np.abs(block).mean()
-                    if volume <= SILENCE_THRESHOLD:
+                    if volume <= self.config.silence_threshold:
                         silence_counter += 1
                     else:
                         silence_counter = 0
@@ -76,12 +70,12 @@ class Transcriber:
 
                         # Save processed mic input for debugging
                         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                        wav_filename = OUTPUT_DIR / f"mic_clean_{timestamp}.wav"
-                        sf.write(wav_filename, np.array(audio_data, dtype=np.float32), SAMPLE_RATE)
+                        wav_filename = self.config.output_dir / f"mic_clean_{timestamp}.wav"
+                        sf.write(wav_filename, np.array(audio_data, dtype=np.float32), self.config.sample_rate)
                         print(Fore.CYAN + f"💾 Saved processed mic input: {wav_filename}")
 
                         if debug:
-                            txt_filename = f"{OUTPUT_DIR}/text_{timestamp}.txt"
+                            txt_filename = self.config.output_dir / f"text_{timestamp}.txt"
                             with open(txt_filename, "w", encoding="utf-8") as f:
                                 f.write(output_text)
                             print(f"💾 Saved transcript to {txt_filename}")
