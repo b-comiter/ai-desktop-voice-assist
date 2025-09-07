@@ -2,7 +2,7 @@ import time
 from pathlib import Path
 import csv
 import soundfile as sf
-from voice_assist.transacription.core import Transcriber
+from voice_assist.transacription.transcriber import Transcriber
 
 # --- CONFIG ---
 MODEL_SIZES = [

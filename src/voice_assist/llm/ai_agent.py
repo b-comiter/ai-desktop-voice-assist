@@ -1,3 +1,4 @@
+import time
 import ollama
 import re
 from voice_assist.utils.context_manager import ContextManager
@@ -5,10 +6,8 @@ from voice_assist.tools.tools import extract_tool_call
 from ollama._types import ChatResponse
 import multiprocessing as mp
 from colorama import Fore
-import json
 
 PROMPT = ""
-
 
 class AI_AGENT:
     def __init__(
@@ -39,9 +38,10 @@ class AI_AGENT:
         extract_tool_call(reesponse.message)
 
     def stream_query(
-        self, output_queue: mp.Queue, input: str, user_id="user", tools=None
+        self, output_queue, input: str, user_id="user", tools=None
     ):
         self.context_manager.add_message(user_id, "user", input)
+        print(f"[AI Agent] User input: {input}")
 
         full_content_response = ""
         buffer = ""
@@ -61,7 +61,7 @@ class AI_AGENT:
             sentences = re.split(r"([.!?])", buffer)  # keep punctuation
             while len(sentences) > 2:  # means we have at least one full sentence
                 sentence = sentences[0] + sentences[1]
-                output_queue.put(sentence.strip())
+                output_queue.put((sentence.strip(), time.time()))
                 sentences = sentences[2:]
 
             buffer = "".join(sentences)

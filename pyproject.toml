@@ -11,11 +11,13 @@ authors = [{ name="b-comiter", email="you@example.com" }]
 requires-python = ">=3.11"
 dependencies = [
     "colorama>=0.4.6",
+    "edge-tts>=7.2.3",
     "faster-whisper>=1.2.0",
     "kokoro-onnx>=0.4.9",
     "matplotlib>=3.10.6",
     "ml-dtypes>=0.5.3",
     "ollama>=0.5.3",
+    "padasip>=1.2.2",
     "psutil>=7.0.0",
     "pyautogui>=0.9.54",
     "pydantic>=2.11.7",

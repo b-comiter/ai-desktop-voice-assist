@@ -6,7 +6,6 @@ import platform
 import psutil
 from pathlib import Path
 from ollama import Client
-from colorama import Fore, init
 
 client = Client()
 

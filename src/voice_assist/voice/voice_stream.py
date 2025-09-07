@@ -38,7 +38,11 @@ def audio_output_process(audio_queue: mp.Queue, playback_active: mp.Event) -> No
             print("Playback Status ", playback_active)
             playback_active.clear()
             print("Playback Status ", playback_active)
-  
+
+    print(Fore.RED + "[Info] Audio output process terminating gracefully.")
+    return
+
+
 if __name__ == "__main__":
     # Example text
     text = ["""

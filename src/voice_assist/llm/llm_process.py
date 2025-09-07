@@ -6,7 +6,6 @@ from voice_assist.llm.ai_agent import AI_AGENT
 DEBUG = False
 DEBUG_EXTENDED = False
 
-
 def llm_process(llm_queue, speech_queue=None):
     ai_agent = AI_AGENT()
     rolling_transcript = ""

@@ -18,6 +18,7 @@ wheels/
 data/samples/
 data/audio_input/
 benchmarks/results/
+wip/
 
 # Files
 print_structure.py

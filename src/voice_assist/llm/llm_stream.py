@@ -5,17 +5,16 @@ from voice_assist.llm.ai_agent import AI_AGENT
 
 
 def sentence_streamer(
-    model: str, user_id, input, text_queue: mp.Queue, tools=None
+    model: str, user_id, input, text_queue, tools=None
 ) -> None:
     ai_agent = AI_AGENT(user_id=user_id, model=model)
     """
     Stream tokens from Ollama LLM and enqueue complete sentences.
     Each sentence is pushed to the queue as soon as it's complete.
     """
+
     try:
-        full_response = ai_agent.stream_query(
-            text_queue, input, user_id=user_id, tools=tools
-        )
+        full_response = ai_agent.stream_query(text_queue, input, user_id=user_id, tools=tools)
         ai_agent.context_manager.add_message("user", "assistant", full_response)
     finally:
         # Sentinel to tell the consumer that streaming is done

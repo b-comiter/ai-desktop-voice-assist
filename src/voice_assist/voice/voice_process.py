@@ -4,23 +4,8 @@ import sounddevice as sd
 from colorama import Fore
 import time
 
-vocalizer = Vocalizer()
-print(vocalizer, "made an object")
-
-
-def synthesize_speech(text, debug=False):
-    if debug:
-        start = time.time()
-    print(Fore.GREEN + "Synthesizing_Speech")
-    samples, sample_rate = vocalizer.create_audio(text)
-
-    if debug:
-        print(Fore.GREEN + f"Synthesis took: {time.time() - start}")
-
-    return samples, sample_rate
-
-
-def synthesize_speech(text, debug=False):
+def synthesize_speech(text, vocalizer, debug=False):
+    """Generate audio for text using a given Vocalizer instance."""
     if debug:
         start = time.time()
     print(Fore.GREEN + "Synthesizing_Speech")
@@ -45,20 +30,19 @@ def save_audio_to_file(samples, sample_rate, filename="output.wav"):
     print(f"Audio saved to {filename}")
 
 
-def create_speech(text, debug=False):
-    data, sample_rate = synthesize_speech(text, debug)
+def create_speech(text, vocalizer, debug=False):
+    data, sample_rate = synthesize_speech(text, vocalizer, debug)
     play_audio(data, sample_rate)
 
 
 def speech_process(speech_queue):
+    """Example speech process that instantiates a single Vocalizer per process."""
+    vocalizer = Vocalizer()  # Only once per process
+    print(vocalizer, "Vocalizer object created for this process")
     last_end_time = None  # track when last audio finished
 
     while True:
-        start_wait = time.time()
         text = speech_queue.get()  # blocking until next text
-        wait_duration = time.time() - start_wait
-        print(f"[Metrics] Waited {wait_duration:.3f}s for next item in queue")
-
         if text is None:  # Exit signal
             break
 
@@ -69,14 +53,12 @@ def speech_process(speech_queue):
         print(f"[Speech] {text}")
 
         start_wait = time.time()
-        # Synthesize and play
-        data, sample_rate = synthesize_speech(text)
+        data, sample_rate = synthesize_speech(text, vocalizer)
         wait_duration = time.time() - start_wait
         print(f"[Metrics] Synthesis took {wait_duration:.3f}s")
 
         # Measure playback duration
         start_play = time.time()
-        # Track idle time (time since last clip finished)
         if last_end_time is not None:
             idle_time = start_play - last_end_time
             print(f"[Metrics] Idle time before next speech: {idle_time:.3f}s")
@@ -86,7 +68,7 @@ def speech_process(speech_queue):
         play_duration = end_play - start_play
         print(f"[Metrics] Audio played | Duration: {play_duration:.3f}s")
 
-        last_end_time = end_play  # update end time for next idle measurement
+        last_end_time = end_play
 
 
 if __name__ == "__main__":

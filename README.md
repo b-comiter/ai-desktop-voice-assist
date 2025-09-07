@@ -2,6 +2,8 @@
 
 A local AI-powered voice assistant that lets you interact naturally with your computer. Speak to it, and it listens, thinks, and responds like a personal AI agent running on your machine.
 
+I currently recommend starting the assitant with headphones. Working on voice subtraction in a future update.
+
 * (The project is still in flux and may change goals or focuses overtime.)
 
 ## ✨ Features
@@ -24,10 +26,10 @@ The system is composed of three main parts:
 ├── ai-desktop-voice-assist/
 │   ├── uv.lock
 │   ├── pyproject.toml
-│   ├── print_structure.py
 │   ├── README.md
 │   ├── .gitignore
 │   ├── .python-version
+│   ├── main.py                   # Entry point
 │   ├── benchmarks/
 │   │   ├── results/
 │   │   ├── scripts/
@@ -40,7 +42,6 @@ The system is composed of three main parts:
 │   │   ├── audio_input/
 │   ├── src/
 │   │   ├── voice_assist/
-│   │   │   ├── main.py
 │   │   │   ├── tools/
 │   │   │   │   ├── tools.py
 │   │   │   │   ├── get_active_apps.py
@@ -50,12 +51,10 @@ The system is composed of three main parts:
 │   │   │   │   ├── llm_stream.py
 │   │   │   ├── pipelines/
 │   │   │   │   ├── multiprocess_pipeline.py
-│   │   │   │   ├── voice_assistant_pipeline.py
 │   │   │   ├── utils/
 │   │   │   │   ├── context_manager.py
 │   │   │   ├── transacription/
 │   │   │   │   ├── transcriber.py
-│   │   │   │   ├── auto_spliter.py
 │   │   │   ├── voice/
 │   │   │   │   ├── voice_process.py
 │   │   │   │   ├── voice_synth.py
